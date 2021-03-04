@@ -1,6 +1,7 @@
 package com.example.quizapp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_quiz_questions.*
 
@@ -18,6 +20,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var mCurrentPosition = 1
     private var mQuestionList: ArrayList<Question>? = null
     private var mSelectedOption: Int = 0
+    private var mCorrectAnswers: Int = 0
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,15 +36,23 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         tvOptionTwo.setOnClickListener(this)
         tvOptionThree.setOnClickListener(this)
         tvOptionFour.setOnClickListener(this)
+        btnSubmit.setOnClickListener(this)
 
 
     }
 
     private fun setQuestion() {
 
+        mQuestionList = Constants.getQuestions()
         defaultOptionsView()
 
-        mQuestionList = Constants.getQuestions()
+        if (mCurrentPosition == mQuestionList!!.size) {
+            btnSubmit.text = "BEENDEN"
+        } else {
+            btnSubmit.text = "NÄCHSTE FRAGE"
+        }
+
+
         Log.i("Fragen", "${mQuestionList!!.size}")
 
         val question: Question? = mQuestionList!![mCurrentPosition-1]
@@ -114,6 +125,70 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             tvOptionFour.id -> {
                 selectedOptionView(tvOptionFour, 4)
             }
+            btnSubmit.id -> {
+                if (mSelectedOption == 0) {
+                    mCurrentPosition++
+
+                    when {
+                        mCurrentPosition <= mQuestionList!!.size -> {
+                            setQuestion()
+                        } else -> {
+                            val intent = Intent(this, ResultActivity::class.java)
+                        intent.putExtra(Constants.USER_NAME, mUserName)
+                        intent.putExtra(Constants.CORRECT_ANSWERS, mCorrectAnswers.toString())
+                        intent.putExtra(Constants.TOTAL_QUESTIONS, mQuestionList!!.size.toString())
+                        startActivity(intent)
+                        finish()
+                        }
+                    }
+                } else {
+                    val question = mQuestionList?.get(mCurrentPosition-1)
+
+                    if (question!!.correctAnswer != mSelectedOption) {
+                        answerView(mSelectedOption, R.drawable.wrong_option_border)
+                    } else {
+                        mCorrectAnswers++
+                    }
+
+                    answerView(question!!.correctAnswer, R.drawable.correct_option_border)
+
+                    if (mCurrentPosition == mQuestionList!!.size) {
+                        btnSubmit.text = "BEENDEN"
+                    } else {
+                        btnSubmit.text = "NÄCHSTE FRAGE"
+                    }
+
+                    mSelectedOption = 0
+                }
+            }
+        }
+
+    }
+
+    private fun answerView(answer: Int, drawableView: Int) {
+
+        when(answer) {
+            1 -> {
+                tvOptionOne.background = ContextCompat.getDrawable(
+                        this, drawableView
+                )
+            }
+            2 -> {
+                tvOptionTwo.background = ContextCompat.getDrawable(
+                        this, drawableView
+                )
+            }
+            3 -> {
+                tvOptionThree.background = ContextCompat.getDrawable(
+                        this, drawableView
+                )
+            }
+            4 -> {
+                tvOptionFour.background = ContextCompat.getDrawable(
+                        this, drawableView
+                )
+            }
+
         }
 
     }

@@ -1,43 +1,31 @@
 package com.example.quizapp
 
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
-import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_result.*
 
-class MainActivity : AppCompatActivity() {
+class ResultActivity : AppCompatActivity() {
 
     private var sysUIHidden = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_result)
         hideStatusBar()
 
-        btnStart.setOnClickListener {
-            if (etName.text.toString().isEmpty()) {
-                Toast.makeText(this, "Bitte gib deinen Namen ein", Toast.LENGTH_LONG).show()
-            } else {
+        val username = intent.getStringExtra(Constants.USER_NAME)
+        val correctAnswers = intent.getStringExtra(Constants.CORRECT_ANSWERS)
+        val totalQuestions = intent.getStringExtra(Constants.TOTAL_QUESTIONS)
 
-                //WATCH OUT: new constructor of intent
-                val intent = Intent(this, QuizQuestionsActivity::class.java)
+        tvName.text = username
+        tvScore.text = "Du hast $correctAnswers von $totalQuestions richtig beantwortet"
 
-                //We use a constant to avoid misspellings and stuff
-                intent.putExtra(Constants.USER_NAME, etName.text.toString().trim())
-                startActivity(intent)
-                finish()
-
-            }
+        btnFinish.setOnClickListener{
+            startActivity(Intent(this, MainActivity::class.java))
         }
-
-
-
     }
-
 
     override fun onResume() {
         super.onResume()

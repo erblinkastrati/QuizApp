@@ -9,6 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QuizApp">
+
+        <activity
+            android:name=".ResultActivity"
+            android:theme="@style/NoActionBarTheme"
+            android:screenOrientation="portrait">
+
+        </activity>
+
         <activity
             android:name=".QuizQuestionsActivity"
             android:screenOrientation="portrait"
@@ -16,6 +24,7 @@
             android:windowSoftInputMode="adjustResize">
 
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
@@ -27,6 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
